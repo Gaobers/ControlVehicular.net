@@ -8,6 +8,8 @@ using Microsoft.OpenApi.Models;
 using System.Security.Claims;
 using ControlVehicular.Services.Integraciones;
 using System.Net;
+using ControlVehicular.Services.Estadisticas;
+using ControlVehicular.Endpoints;
 
 // =====================================================
 // CONFIGURACIÓN INICIAL
@@ -99,30 +101,43 @@ builder.Services.AddAutoMapper(
         // INTEGRACIÓN CON API JAVA
         // =====================================================
 
-var javaApiUrl = builder.Configuration["JavaApi:BaseUrl"];
+            var javaApiUrl = builder.Configuration["JavaApi:BaseUrl"];
 
-if (!Uri.TryCreate(
-        javaApiUrl,
-        UriKind.Absolute,
-        out var javaUri
-    ) || javaUri.Scheme != Uri.UriSchemeHttps)
-{
-    throw new InvalidOperationException(
-        "La URL de la API Java debe ser una dirección HTTPS válida."
-    );
-}
+            if (!Uri.TryCreate(
+                    javaApiUrl,
+                    UriKind.Absolute,
+                    out var javaUri
+                ) || javaUri.Scheme != Uri.UriSchemeHttps)
+            {
+                throw new InvalidOperationException(
+                    "La URL de la API Java debe ser una dirección HTTPS válida."
+                );
+            }
 
-builder.Services.AddHttpClient<
-    IJavaApiService,
-    JavaApiService
->(client =>
-{
-    client.BaseAddress = new Uri(
-        javaUri.AbsoluteUri.TrimEnd('/') + "/"
-    );
+            builder.Services.AddHttpClient<
+                IJavaApiService,
+                JavaApiService
+            >(client =>
+            {
+                client.BaseAddress = new Uri(
+                    javaUri.AbsoluteUri.TrimEnd('/') + "/"
+                );
 
-    client.Timeout = TimeSpan.FromSeconds(200);
-});
+                client.Timeout = TimeSpan.FromSeconds(200);
+            });
+
+
+//
+////
+/////////////// =====================================================
+            // SERVICIO DE ESTADISTICAS DE GASTOS
+            // =====================================================
+
+            builder.Services.AddScoped<
+                IEstadisticasGastosService,
+                EstadisticasGastosService
+            >();
+
 
 
 
@@ -254,6 +269,12 @@ app.UseAuthorization();
 // =====================================================
 
 app.MapControllers();
+
+// =====================================================
+// ENDPOINTS DE ESTADISTICAS
+// =====================================================
+
+app.AddEstadisticasGastos();
 
 // =====================================================
 // ENDPOINT: ESTADO DE LA API
