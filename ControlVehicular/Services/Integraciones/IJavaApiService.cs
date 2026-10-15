@@ -15,5 +15,11 @@ namespace ControlVehicular.Services.Integraciones
             string token,
             CancellationToken cancellationToken = default
         );
+
+        Task<JavaApiResponse> ObtenerVehiculoAsync(
+        long vehiculoId,
+        string token,
+        CancellationToken cancellationToken = default
+);
     }
 }

@@ -61,5 +61,57 @@ namespace ControlVehicular.Services.Integraciones
                 tipoContenido
             );
         }
+
+
+        // ==========================================
+        // VERIFICAR VEHICULO EN LA API JAVA
+        // ==========================================
+
+        public async Task<JavaApiResponse> ObtenerVehiculoAsync(
+            long vehiculoId,
+            string token,
+            CancellationToken cancellationToken = default
+        )
+        {
+            if (vehiculoId <= 0)
+            {
+                throw new ArgumentException(
+                    "El identificador del vehículo no es válido."
+                );
+            }
+
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                throw new ArgumentException(
+                    "El token JWT es obligatorio."
+                );
+            }
+
+            using var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"api/vehiculos/{vehiculoId}"
+            );
+
+            request.Headers.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue(
+                    "Bearer",
+                    token
+                );
+
+            using var response = await _httpClient.SendAsync(
+                request,
+                cancellationToken
+            );
+
+            var contenido = await response.Content
+                .ReadAsStringAsync(cancellationToken);
+
+            return new JavaApiResponse(
+                response.StatusCode,
+                contenido,
+                response.Content.Headers.ContentType?.ToString()
+            );
+        }
+
     }
 }
