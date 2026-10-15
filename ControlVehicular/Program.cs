@@ -10,6 +10,7 @@ using ControlVehicular.Services.Integraciones;
 using System.Net;
 using ControlVehicular.Services.Estadisticas;
 using ControlVehicular.Endpoints;
+using ControlVehicular.Services.DocumentosVehiculo;
 
 // =====================================================
 // CONFIGURACIÓN INICIAL
@@ -137,6 +138,17 @@ builder.Services.AddAutoMapper(
                 IEstadisticasGastosService,
                 EstadisticasGastosService
             >();
+
+
+            // ==========================================
+            // SERVICIO DE DOCUMENTOS DEL VEHICULO
+            // ==========================================
+
+            builder.Services.AddScoped<
+                IDocumentoVehiculoService,
+                DocumentoVehiculoService
+            >();
+
 
 
 
@@ -270,11 +282,20 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+
+/////////////////////////////
+
 // =====================================================
 // ENDPOINTS DE ESTADISTICAS
 // =====================================================
 
 app.AddEstadisticasGastos();
+
+// ==========================================
+// ENDPOINTS DE DOCUMENTOS
+// ==========================================
+
+app.AddDocumentoVehiculoEndpoints();
 
 // =====================================================
 // ENDPOINT: ESTADO DE LA API
