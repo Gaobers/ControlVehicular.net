@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="ControlVehicular.TestxUnit/ControlVehicular.TestxUnit.csproj" Id="282aa219-9991-4053-b9ba-2be3785d08ca" />
   <Project Path="ControlVehicular/ControlVehicular.csproj" />
 </Solution>
